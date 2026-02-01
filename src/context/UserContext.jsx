@@ -6,52 +6,56 @@ export function UserProvider({ children }) {
   const [token, setToken] = useState(null);
   const [email, setEmail] = useState(null);
 
-  // LOGIN (backend)
-  async function login(email, password) {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
+  // LOGIN
+  async function login(emailUtilisateur, motDePasse) {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: emailUtilisateur,
+          password: motDePasse,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
+      if (!response.ok) {
+        return false;
+      }
+
       setToken(data.token);
       setEmail(data.email);
       return true;
-    } else {
-      alert("Login incorrect");
+    } catch (erreur) {
+      console.log("Erreur login :", erreur);
       return false;
     }
   }
 
-  // REGISTER (backend)
-  async function register(email, password) {
-    const response = await fetch("http://localhost:5000/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
+  // REGISTER
+  async function register(emailUtilisateur, motDePasse) {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: emailUtilisateur,
+          password: motDePasse,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
+      if (!response.ok) {
+        return false;
+      }
+
       setToken(data.token);
       setEmail(data.email);
       return true;
-    } else {
-      alert("Erreur register");
+    } catch (erreur) {
+      console.log("Erreur register :", erreur);
       return false;
     }
   }
@@ -63,15 +67,7 @@ export function UserProvider({ children }) {
   }
 
   return (
-    <UserContext.Provider
-      value={{
-        token,
-        email,
-        login,
-        register,
-        logout,
-      }}
-    >
+    <UserContext.Provider value={{ token, email, login, register, logout }}>
       {children}
     </UserContext.Provider>
   );
